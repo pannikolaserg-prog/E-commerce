@@ -1,6 +1,11 @@
 import json
 import os
+import sys
 
+# Добавляем корень проекта в путь Python
+sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
+
+# Импортируем ВСЕ модули сразу после добавления пути
 from src.classes import Category
 from src.utils import load_json_to_objects
 
