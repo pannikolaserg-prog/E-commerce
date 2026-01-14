@@ -62,6 +62,7 @@ class TestCategory:
             Product("П2", "Описание 2", 200.0, 2)
         ]
 
+
         # Act
         category = Category(name, description, products)
 
