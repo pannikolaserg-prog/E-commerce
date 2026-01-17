@@ -7,7 +7,7 @@ class Product:
     def __init__(self, name, description, price, quantity):
         self.name = name
         self.description = description
-        self._price = price
+        self.__price = price
         self.quantity = quantity
 
     @classmethod
@@ -32,21 +32,24 @@ class Product:
     @property
     def price(self):
         """Задание 4: геттер для цены"""
-        return self._price
+        return self.__price
 
     @price.setter
     def price(self, new_price):
-        """Задание 4: сеттер для цены"""
         if new_price <= 0:
             print("Цена не должна быть нулевая или отрицательная")
             return
 
-        if hasattr(self, '_price') and new_price < self._price:
-            answer = input(f"Цена понижается с {self._price} до {new_price}. Подтвердить (y/n)? ")
+        # Проверяем, есть ли текущая цена
+        current_price = getattr(self, '_Product__price', None)
+
+        if current_price is not None and new_price < current_price:
+            answer = input(f"Цена понижается с {current_price} до {new_price}. Подтвердить (y/n)? ")
             if answer.lower() != 'y':
+                print("Изменение цены отменено")
                 return
 
-        self._price = new_price
+        self.__price = new_price
 
 
 class Category:
@@ -71,10 +74,17 @@ class Category:
 
     @property
     def products(self):
-        """Задание 2: геттер для списка товаров"""
         result = []
+        template = "{name}, {price} руб. Остаток: {quantity} шт."
+
         for p in self.__products:
-            result.append(f"{p.name}, {p.price} руб. Остаток: {p.quantity} шт.")
+            item = template.format(
+                name=p.name,
+                price=p.price,
+                quantity=p.quantity
+            )
+            result.append(item)
+
         return result
 
     @property
