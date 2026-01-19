@@ -1,0 +1,26 @@
+[
+  {
+    "name": "Категория",
+    "description": "Описание",
+    "products": [
+      {
+        "name": "Товар 1",
+        "description": "Описание 1",
+        "price": 100.0,
+        "quantity": 5
+      },
+      {
+        "name": "Товар 2",
+        "description": "Описание 2",
+        "price": 200.0,
+        "quantity": 10
+      },
+      {
+        "name": "Товар 3",
+        "description": "Описание 3",
+        "price": 300.0,
+        "quantity": 15
+      }
+    ]
+  }
+]
