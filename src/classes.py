@@ -1,5 +1,3 @@
-from itertools import product
-
 
 class Product:
     """Класс для описания продуктов"""
@@ -11,7 +9,7 @@ class Product:
         self.quantity = quantity
 
     @classmethod
-    def new_product(cls, product_data,  products_list=None):
+    def new_product(cls, product_data, products_list=None):
         """Задание 3: класс-метод для создания товара"""
         name = product_data["name"]
         price = product_data["price"]
@@ -41,15 +39,28 @@ class Product:
             return
 
         # Проверяем, есть ли текущая цена
-        current_price = getattr(self, '_Product__price', None)
+        current_price = getattr(self, "_Product__price", None)
 
         if current_price is not None and new_price < current_price:
             answer = input(f"Цена понижается с {current_price} до {new_price}. Подтвердить (y/n)? ")
-            if answer.lower() != 'y':
+            if answer.lower() != "y":
                 print("Изменение цены отменено")
                 return
 
         self.__price = new_price
+
+    def __str__(self):
+        return f"Product({self.name}, {self.__price} руб. Остаток: {self.quantity} шт.)"
+
+    def __add__(self, other):
+        """
+        Сложение товаров: возвращает общую стоимость всех товаров на складе
+        Формула: (цена1 * количество1) + (цена2 * количество2)
+        """
+        if isinstance(other, Product):
+            return (self.price * self.quantity) + (other.price * other.quantity)
+        else:
+            raise TypeError("Можно складывать только объекты Product")
 
 
 class Category:
@@ -78,11 +89,7 @@ class Category:
         template = "{name}, {price} руб. Остаток: {quantity} шт."
 
         for p in self.__products:
-            item = template.format(
-                name=p.name,
-                price=p.price,
-                quantity=p.quantity
-            )
+            item = template.format(name=p.name, price=p.price, quantity=p.quantity)
             result.append(item)
 
         return result
@@ -90,3 +97,40 @@ class Category:
     @property
     def product_count(self):
         return len(self.__products)
+
+    @property
+    def total_quantity(self):
+        """Общее количество всех продуктов в категории"""
+        return sum(p.quantity for p in self.__products)
+
+    def __str__(self):
+        """Задание 1: строковое отображение категории"""
+        return f"{self.name}, количество продуктов: {self.total_quantity} шт."
+
+
+class CategoryIterator:
+    """Вспомогательный класс для итерации по товарам категории"""
+
+    def __init__(self, category):
+        """
+        Инициализация итератора
+
+        Args:
+            category: объект класса Category
+        """
+        self.category = category
+        self.products = category.products_objects  # Нужен метод для получения объектов
+        self.index = 0
+
+    def __iter__(self):
+        """Возвращает сам объект как итератор"""
+        self.index = 0
+        return self
+
+    def __next__(self):
+        """Возвращает следующий товар из категории"""
+        if self.index >= len(self.products):
+            raise StopIteration
+        product = self.products[self.index]
+        self.index += 1
+        return product
