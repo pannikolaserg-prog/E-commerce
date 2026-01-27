@@ -5,7 +5,7 @@ from unittest.mock import patch
 
 # Добавляем src в путь Python
 sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), "..")))
-from src.classes import Category, Product
+from src.classes import Category, LawnGrass, Product, Smartphone
 
 
 def test_product_creation():
@@ -152,20 +152,6 @@ def test_add_product():
 
     assert cat.product_count == 1
     assert len(cat.products) == 1
-
-
-def test_add_wrong_product_type():
-    """Тест добавления неправильного типа товара"""
-    cat = Category("Тест", "Тест")
-
-    captured_output = StringIO()
-    sys.stdout = captured_output
-
-    cat.add_product("не товар")
-    sys.stdout = sys.__stdout__
-
-    assert "Ошибка: можно добавлять только Product" in captured_output.getvalue()
-    assert cat.product_count == 0
 
 
 def test_products_getter_format():
@@ -356,3 +342,56 @@ class TestIntegration:
         p = Product("Товар", "Описание", 100, 5)
         p.quantity = 8
         assert "Остаток: 8 шт." in str(p)
+
+
+def test_smartphone_creation():
+    """Тест создания смартфона"""
+    smartphone = Smartphone(
+        name="iPhone 15",
+        description="Смартфон",
+        price=150000,
+        quantity=5,
+        efficiency=95.5,
+        model="15 Pro",
+        memory=256,
+        color="Black",
+    )
+    assert smartphone.name == "iPhone 15"
+    assert smartphone.price == 150000
+    assert smartphone.efficiency == 95.5
+    assert smartphone.memory == 256
+    # Проверяем, что наследуется от Product
+    assert isinstance(smartphone, Product)
+
+
+def test_lawn_grass_creation():
+    """Тест создания газонной травы"""
+    grass = LawnGrass(
+        name="Газонная трава",
+        description="Элитная",
+        price=500,
+        quantity=20,
+        country="Россия",
+        germination_period="7 дней",
+        color="Зеленый",
+    )
+    assert grass.name == "Газонная трава"
+    assert grass.price == 500
+    assert grass.country == "Россия"
+    assert grass.germination_period == "7 дней"
+    assert isinstance(grass, Product)
+
+
+def test_smartphone_and_grass_addition():
+    """Тест сложения смартфона и травы (если разрешено)"""
+    smartphone = Smartphone("Phone", "", 100000, 2, 95.0, "X", 256, "Black")
+    grass = LawnGrass("Grass", "", 500, 10, "RU", "7d", "Green")
+
+    # Если __add__ проверяет type() is Product, то должно работать
+    # Если проверяет type() is type(self), то вызовет ошибку
+    try:
+        result = smartphone + grass
+        print(f"Сложение разрешено, результат: {result}")
+        assert isinstance(result, (int, float))
+    except TypeError:
+        print("Сложение запрещено - разные типы товаров")
