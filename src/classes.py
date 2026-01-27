@@ -1,4 +1,3 @@
-
 class Product:
     """Класс для описания продуктов"""
 
@@ -50,14 +49,14 @@ class Product:
         self.__price = new_price
 
     def __str__(self):
-        return f"Product({self.name}, {self.__price} руб. Остаток: {self.quantity} шт.)"
+        return f"({self.name}, {self.__price} руб. Остаток: {self.quantity} шт.)"
 
     def __add__(self, other):
         """
         Сложение товаров: возвращает общую стоимость всех товаров на складе
         Формула: (цена1 * количество1) + (цена2 * количество2)
         """
-        if isinstance(other, Product):
+        if type(other) is type(self):
             return (self.price * self.quantity) + (other.price * other.quantity)
         else:
             raise TypeError("Можно складывать только объекты Product")
@@ -81,7 +80,7 @@ class Category:
         if isinstance(product, Product):
             self.__products.append(product)
         else:
-            print("Ошибка: можно добавлять только Product")
+            raise TypeError("Ошибка: можно добавлять только Product")
 
     @property
     def products(self):
@@ -134,3 +133,20 @@ class CategoryIterator:
         product = self.products[self.index]
         self.index += 1
         return product
+
+
+class Smartphone(Product):
+    def __init__(self, name, description, price, quantity, efficiency, model, memory, color):
+        super().__init__(name, description, price, quantity)
+        self.efficiency = efficiency
+        self.model = model
+        self.memory = memory
+        self.color = color
+
+
+class LawnGrass(Product):
+    def __init__(self, name, description, price, quantity, country, germination_period, color):
+        super().__init__(name, description, price, quantity)
+        self.country = country
+        self.germination_period = germination_period
+        self.color = color
