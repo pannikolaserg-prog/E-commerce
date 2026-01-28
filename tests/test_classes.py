@@ -3,12 +3,14 @@ import sys
 from io import StringIO
 from unittest.mock import patch
 
-# Добавляем src в путь Python
-sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), "..")))
+# Переходим в корень проекта
+os.chdir(os.path.join(os.path.dirname(__file__), '..'))
+sys.path.insert(0, os.getcwd())
+
 from src.classes import Category, LawnGrass, Product, Smartphone
 
 
-def test_product_creation():
+def test_product_creation() -> None:
     """Тест создания товара"""
     p = Product("Телефон", "Смартфон", 10000, 5)
     assert p.name == "Телефон"
@@ -17,20 +19,20 @@ def test_product_creation():
     assert p.quantity == 5
 
 
-def test_product_price_getter():
+def test_product_price_getter() -> None:
     """Тест получения цены"""
     p = Product("Товар", "Описание", 500, 2)
     assert p.price == 500
 
 
-def test_product_price_setter_positive():
+def test_product_price_setter_positive() -> None:
     """Тест установки корректной цены"""
     p = Product("Товар", "Описание", 100, 1)
     p.price = 200
     assert p.price == 200
 
 
-def test_product_price_setter_negative():
+def test_product_price_setter_negative() -> None:
     """Тест защиты от отрицательной цены"""
     p = Product("Товар", "Описание", 100, 1)
 
@@ -45,7 +47,7 @@ def test_product_price_setter_negative():
     assert p.price == 100  # Цена не изменилась
 
 
-def test_product_price_setter_zero():
+def test_product_price_setter_zero() -> None:
     """Тест защиты от нулевой цены"""
     p = Product("Товар", "Описание", 100, 1)
 
@@ -59,7 +61,7 @@ def test_product_price_setter_zero():
     assert p.price == 100
 
 
-def test_product_price_decrease_with_confirmation():
+def test_product_price_decrease_with_confirmation() -> None:
     """Тест понижения цены с подтверждением"""
     p = Product("Товар", "Описание", 100, 1)
 
@@ -70,7 +72,7 @@ def test_product_price_decrease_with_confirmation():
     assert p.price == 80
 
 
-def test_product_price_decrease_without_confirmation():
+def test_product_price_decrease_without_confirmation() -> None:
     """Тест понижения цены без подтверждения"""
     p = Product("Товар", "Описание", 100, 1)
 
@@ -81,7 +83,7 @@ def test_product_price_decrease_without_confirmation():
     assert p.price == 100  # Цена не изменилась
 
 
-def test_new_product_creation():
+def test_new_product_creation() -> None:
     """Тест создания товара через new_product"""
     data = {"name": "Ноутбук", "description": "Игровой", "price": 50000, "quantity": 3}
 
@@ -93,7 +95,7 @@ def test_new_product_creation():
     assert p.quantity == 3
 
 
-def test_new_product_with_duplicate():
+def test_new_product_with_duplicate() -> None:
     """Тест new_product с дубликатом товара"""
     existing_products = [Product("Телефон", "Старый", 8000, 10)]
 
@@ -109,7 +111,7 @@ def test_new_product_with_duplicate():
     assert result.price == 12000
 
 
-def test_new_product_with_duplicate_lower_price():
+def test_new_product_with_duplicate_lower_price() -> None:
     """Тест new_product с дубликатом и более низкой ценой"""
     existing_products = [Product("Телефон", "Старый", 10000, 10)]
 
@@ -123,7 +125,7 @@ def test_new_product_with_duplicate_lower_price():
     assert result.quantity == 15
 
 
-def test_category_creation():
+def test_category_creation() -> None:
     """Тест создания категории"""
     cat = Category("Электроника", "Техника")
 
@@ -132,7 +134,7 @@ def test_category_creation():
     assert cat.product_count == 0
 
 
-def test_category_creation_with_products():
+def test_category_creation_with_products() -> None:
     """Тест создания категории с товарами"""
     p1 = Product("Товар1", "Описание", 100, 1)
     p2 = Product("Товар2", "Описание", 200, 2)
@@ -143,7 +145,7 @@ def test_category_creation_with_products():
     assert len(cat.products) == 2
 
 
-def test_add_product():
+def test_add_product() -> None:
     """Тест добавления товара в категорию"""
     cat = Category("Тест", "Тест")
     p = Product("Товар", "Описание", 100, 5)
@@ -154,7 +156,7 @@ def test_add_product():
     assert len(cat.products) == 1
 
 
-def test_products_getter_format():
+def test_products_getter_format() -> None:
     """Тест формата вывода товаров"""
     p = Product("Смартфон", "Описание", 15000, 3)
     cat = Category("Тест", "Описание", [p])
@@ -168,7 +170,7 @@ def test_products_getter_format():
     assert "Остаток: 3 шт." in product_str
 
 
-def test_multiple_additions():
+def test_multiple_additions() -> None:
     """Тест множественных добавлений"""
     cat = Category("Тест", "Тест")
 
@@ -185,7 +187,7 @@ def test_multiple_additions():
         assert expected_str in cat.products
 
 
-def test_empty_category():
+def test_empty_category() -> None:
     """Тест пустой категории"""
     cat = Category("Пустая", "Категория без товаров")
 
@@ -196,26 +198,26 @@ def test_empty_category():
 class TestNewStringFunctionality:
     """Тесты для нового строкового представления"""
 
-    def test_product_str_with_float_price(self):
+    def test_product_str_with_float_price(self) -> None:
         """Тест __str__ с дробной ценой"""
         product = Product("Кофе", "Арабика", 299.99, 15)
         result = str(product)
         assert "299.99 руб." in result or "299.99 руб." in result
         assert "Остаток: 15 шт." in result
 
-    def test_category_str_empty(self):
+    def test_category_str_empty(self) -> None:
         """Тест __str__ для пустой категории"""
         category = Category("Пустая", "Категория без товаров")
         assert str(category) == "Пустая, количество продуктов: 0 шт."
 
-    def test_category_str_with_products(self):
+    def test_category_str_with_products(self) -> None:
         """Тест __str__ для категории с товарами"""
         products = [Product("Товар1", "", 100, 5), Product("Товар2", "", 200, 3), Product("Товар3", "", 150, 2)]
         category = Category("Тест", "Категория", products)
         # 5 + 3 + 2 = 10
         assert str(category) == "Тест, количество продуктов: 10 шт."
 
-    def test_category_products_getter_uses_str(self):
+    def test_category_products_getter_uses_str(self) -> None:
         """Тест что геттер products использует __str__ Product"""
         product = Product("Тестовый", "Товар", 500, 8)
         category = Category("Кат", "Описание", [product])
@@ -228,7 +230,7 @@ class TestNewStringFunctionality:
 class TestProductAddition:
     """Тесты для сложения товаров"""
 
-    def test_product_add_basic(self):
+    def test_product_add_basic(self) -> None:
         """Базовый тест сложения товаров"""
         p1 = Product("A", "", 100, 10)  # 100 * 10 = 1000
         p2 = Product("B", "", 200, 2)  # 200 * 2 = 400
@@ -236,7 +238,7 @@ class TestProductAddition:
         result = p1 + p2
         assert result == 1400  # 1000 + 400
 
-    def test_product_add_order(self):
+    def test_product_add_order(self) -> None:
         """Тест порядка сложения (коммутативность)"""
         p1 = Product("X", "", 50, 4)  # 50 * 4 = 200
         p2 = Product("Y", "", 30, 10)  # 30 * 10 = 300
@@ -247,7 +249,7 @@ class TestProductAddition:
         assert result2 == 500
         assert result1 == result2
 
-    def test_product_add_with_zero_quantity(self):
+    def test_product_add_with_zero_quantity(self) -> None:
         """Тест сложения с нулевым количеством"""
         p1 = Product("Товар1", "", 100, 0)  # 100 * 0 = 0
         p2 = Product("Товар2", "", 200, 5)  # 200 * 5 = 1000
@@ -255,7 +257,7 @@ class TestProductAddition:
         result = p1 + p2
         assert result == 1000
 
-    def test_product_add_with_same_product(self):
+    def test_product_add_with_same_product(self) -> None:
         """Тест сложения товара с самим собой"""
         p = Product("Один", "", 500, 3)  # 500 * 3 = 1500
         result = p + p  # 1500 + 1500
@@ -265,7 +267,7 @@ class TestProductAddition:
 class TestOldTestsStillWork:
     """Тесты что старая функциональность все еще работает"""
 
-    def test_product_creation_old(self):
+    def test_product_creation_old(self) -> None:
         """Старый тест создания товара"""
         p = Product("Телефон", "Смартфон", 10000, 5)
         assert p.name == "Телефон"
@@ -273,7 +275,7 @@ class TestOldTestsStillWork:
         assert p.price == 10000
         assert p.quantity == 5
 
-    def test_product_price_protection_old(self):
+    def test_product_price_protection_old(self) -> None:
         """Старый тест защиты цены"""
         p = Product("Тест", "Тест", 100, 1)
 
@@ -288,7 +290,7 @@ class TestOldTestsStillWork:
         assert "Цена не должна быть нулевая или отрицательная" in captured_output.getvalue()
         assert p.price == 100  # Цена не изменилась
 
-    def test_new_product_classmethod_old(self):
+    def test_new_product_classmethod_old(self) -> None:
         """Старый тест класс-метода new_product"""
         data = {"name": "Ноутбук", "description": "Игровой", "price": 50000, "quantity": 3}
         p = Product.new_product(data)
@@ -297,13 +299,13 @@ class TestOldTestsStillWork:
         assert p.price == 50000
         assert p.quantity == 3
 
-    def test_category_creation_old(self):
+    def test_category_creation_old(self) -> None:
         """Старый тест создания категории"""
         cat = Category("Электроника", "Техника")
         assert cat.name == "Электроника"
         assert cat.description == "Техника"
 
-    def test_category_add_product_old(self):
+    def test_category_add_product_old(self) -> None:
         """Старый тест добавления товара в категорию"""
         cat = Category("Тест", "Тест")
         p = Product("Товар", "Описание", 100, 5)
@@ -311,7 +313,7 @@ class TestOldTestsStillWork:
         cat.add_product(p)
         assert len(cat.products) == 1
 
-    def test_private_products_attribute_old(self):
+    def test_private_products_attribute_old(self) -> None:
         """Старый тест приватности списка товаров"""
         cat = Category("Тест", "Тест")
 
@@ -325,7 +327,7 @@ class TestOldTestsStillWork:
 class TestIntegration:
     """Интеграционные тесты всей системы"""
 
-    def test_price_change_affects_str(self):
+    def test_price_change_affects_str(self) -> None:
         """Тест что изменение цены влияет на строковое представление"""
         p = Product("Товар", "Описание", 100, 5)
         original_str = str(p)
@@ -337,14 +339,14 @@ class TestIntegration:
         assert "150 руб." in new_str
         assert "100 руб." not in new_str
 
-    def test_quantity_change_affects_str(self):
+    def test_quantity_change_affects_str(self) -> None:
         """Тест что изменение количества влияет на строковое представление"""
         p = Product("Товар", "Описание", 100, 5)
         p.quantity = 8
         assert "Остаток: 8 шт." in str(p)
 
 
-def test_smartphone_creation():
+def test_smartphone_creation() -> None:
     """Тест создания смартфона"""
     smartphone = Smartphone(
         name="iPhone 15",
@@ -364,7 +366,7 @@ def test_smartphone_creation():
     assert isinstance(smartphone, Product)
 
 
-def test_lawn_grass_creation():
+def test_lawn_grass_creation() -> None:
     """Тест создания газонной травы"""
     grass = LawnGrass(
         name="Газонная трава",
@@ -382,7 +384,7 @@ def test_lawn_grass_creation():
     assert isinstance(grass, Product)
 
 
-def test_smartphone_and_grass_addition():
+def test_smartphone_and_grass_addition() -> None:
     """Тест сложения смартфона и травы (если разрешено)"""
     smartphone = Smartphone("Phone", "", 100000, 2, 95.0, "X", 256, "Black")
     grass = LawnGrass("Grass", "", 500, 10, "RU", "7d", "Green")
