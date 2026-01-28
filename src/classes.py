@@ -2,7 +2,7 @@ from typing import Iterator, Optional
 
 
 class Product:
-    """Класс для описания продуктов"""
+    """ Класс для описания продуктов """
 
     def __init__(self, name: str, description: str, price: float, quantity: int):
         self.name = name
