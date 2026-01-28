@@ -2,15 +2,14 @@ import json
 import os
 import sys
 
-# Добавляем корень проекта в путь Python
-sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
+# Переходим в корень проекта
+os.chdir(os.path.join(os.path.dirname(__file__), '..'))
+sys.path.insert(0, os.getcwd())
 
-# Импортируем ВСЕ модули сразу после добавления пути
-from src.classes import Category
 from src.utils import load_json_to_objects
 
 
-def test_load_json_file_not_found():
+def test_load_json_file_not_found() -> None:
     """Тест загрузки при отсутствии файла"""
     categories = load_json_to_objects("несуществующий_файл.json")
 
@@ -18,7 +17,7 @@ def test_load_json_file_not_found():
     print("✅ test_load_json_file_not_found пройден")
 
 
-def test_load_json_empty():
+def test_load_json_empty() -> None:
     """Тест загрузки пустого JSON"""
     # Создаем пустой JSON файл
     with open("empty.json", "w", encoding="utf-8") as f:

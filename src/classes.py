@@ -1,14 +1,17 @@
+from typing import Iterator, Optional
+
+
 class Product:
     """Класс для описания продуктов"""
 
-    def __init__(self, name, description, price, quantity):
+    def __init__(self, name: str, description: str, price: float, quantity: int):
         self.name = name
         self.description = description
         self.__price = price
         self.quantity = quantity
 
     @classmethod
-    def new_product(cls, product_data, products_list=None):
+    def new_product(cls, product_data: dict, products_list: Optional[list["Product"]] = None) -> "Product":
         """Задание 3: класс-метод для создания товара"""
         name = product_data["name"]
         price = product_data["price"]
@@ -27,12 +30,12 @@ class Product:
         return cls(name, description, price, quantity)
 
     @property
-    def price(self):
+    def price(self) -> float:
         """Задание 4: геттер для цены"""
         return self.__price
 
     @price.setter
-    def price(self, new_price):
+    def price(self, new_price: float) -> None:
         if new_price <= 0:
             print("Цена не должна быть нулевая или отрицательная")
             return
@@ -48,10 +51,10 @@ class Product:
 
         self.__price = new_price
 
-    def __str__(self):
+    def __str__(self) -> str:
         return f"({self.name}, {self.__price} руб. Остаток: {self.quantity} шт.)"
 
-    def __add__(self, other):
+    def __add__(self, other: "Product") -> float:
         """
         Сложение товаров: возвращает общую стоимость всех товаров на складе
         Формула: (цена1 * количество1) + (цена2 * количество2)
@@ -65,17 +68,17 @@ class Product:
 class Category:
     category_count = 0
 
-    def __init__(self, name, description, products=None):
+    def __init__(self, name: str, description: str, products: Optional[list["Product"]] = None):
         self.name = name
         self.description = description
         # Задание 1: приватный список товаров
-        self.__products = []
+        self.__products: list[Product] = []
 
         if products:
             for p in products:
                 self.add_product(p)
 
-    def add_product(self, product):
+    def add_product(self, product: "Product") -> None:
         """Задание 1: метод для добавления товара"""
         if isinstance(product, Product):
             self.__products.append(product)
@@ -83,7 +86,7 @@ class Category:
             raise TypeError("Ошибка: можно добавлять только Product")
 
     @property
-    def products(self):
+    def products(self) -> list:
         result = []
         template = "{name}, {price} руб. Остаток: {quantity} шт."
 
@@ -94,23 +97,28 @@ class Category:
         return result
 
     @property
-    def product_count(self):
+    def product_count(self) -> int:
         return len(self.__products)
 
     @property
-    def total_quantity(self):
+    def total_quantity(self) -> int:
         """Общее количество всех продуктов в категории"""
         return sum(p.quantity for p in self.__products)
 
-    def __str__(self):
+    def __str__(self) -> str:
         """Задание 1: строковое отображение категории"""
         return f"{self.name}, количество продуктов: {self.total_quantity} шт."
+
+    @property
+    def products_objects(self) -> list:
+        """Возвращает список объектов товаров (а не строк)"""
+        return self.__products.copy()  # Возвращаем копию
 
 
 class CategoryIterator:
     """Вспомогательный класс для итерации по товарам категории"""
 
-    def __init__(self, category):
+    def __init__(self, category: "Category"):
         """
         Инициализация итератора
 
@@ -121,22 +129,32 @@ class CategoryIterator:
         self.products = category.products_objects  # Нужен метод для получения объектов
         self.index = 0
 
-    def __iter__(self):
+    def __iter__(self) -> Iterator["Product"]:
         """Возвращает сам объект как итератор"""
         self.index = 0
         return self
 
-    def __next__(self):
+    def __next__(self) -> 'Product':
         """Возвращает следующий товар из категории"""
         if self.index >= len(self.products):
             raise StopIteration
-        product = self.products[self.index]
+        product: 'Product' = self.products[self.index]
         self.index += 1
         return product
 
 
 class Smartphone(Product):
-    def __init__(self, name, description, price, quantity, efficiency, model, memory, color):
+    def __init__(
+        self,
+        name: str,
+        description: str,
+        price: float,
+        quantity: int,
+        efficiency: float,
+        model: str,
+        memory: int,
+        color: str,
+    ):
         super().__init__(name, description, price, quantity)
         self.efficiency = efficiency
         self.model = model
@@ -145,7 +163,16 @@ class Smartphone(Product):
 
 
 class LawnGrass(Product):
-    def __init__(self, name, description, price, quantity, country, germination_period, color):
+    def __init__(
+        self,
+        name: str,
+        description: str,
+        price: float,
+        quantity: int,
+        country: str,
+        germination_period: str,
+        color: str,
+    ):
         super().__init__(name, description, price, quantity)
         self.country = country
         self.germination_period = germination_period
