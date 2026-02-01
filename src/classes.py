@@ -77,6 +77,8 @@ class Category:
         # Задание 1: приватный список товаров
         self.__products: list[Product] = []
 
+        Category.category_count += 1
+
         if products:
             for p in products:
                 self.add_product(p)
