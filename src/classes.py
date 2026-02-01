@@ -1,14 +1,17 @@
 from typing import Iterator, Optional
+from src.BaseProduct import BaseProduct
+from src.PrintMixin import PrintMixin
 
-
-class Product:
+class Product(BaseProduct, PrintMixin):
     """Класс для описания продуктов"""
 
     def __init__(self, name: str, description: str, price: float, quantity: int):
+
         self.name = name
         self.description = description
         self.__price = price
         self.quantity = quantity
+        super().__init__()
 
     @classmethod
     def new_product(cls, product_data: dict, products_list: Optional[list["Product"]] = None) -> "Product":
@@ -73,6 +76,8 @@ class Category:
         self.description = description
         # Задание 1: приватный список товаров
         self.__products: list[Product] = []
+
+        Category.category_count += 1
 
         if products:
             for p in products:
