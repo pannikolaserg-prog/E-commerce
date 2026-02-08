@@ -1,6 +1,8 @@
 from typing import Iterator, Optional
+
 from src.BaseProduct import BaseProduct
 from src.PrintMixin import PrintMixin
+
 
 class Product(BaseProduct, PrintMixin):
     """Класс для описания продуктов"""
@@ -10,7 +12,10 @@ class Product(BaseProduct, PrintMixin):
         self.name = name
         self.description = description
         self.__price = price
-        self.quantity = quantity
+        if quantity == 0:  # Если скрипт пустой
+            raise ValueError("Товар с нулевым количеством не может быть добавлен")
+        else:
+            self.quantity = quantity
         super().__init__()
 
     @classmethod
@@ -119,6 +124,18 @@ class Category:
         """Возвращает список объектов товаров (а не строк)"""
         return self.__products.copy()  # Возвращаем копию
 
+    def middle_price(self):
+        """
+        Возвращает среднюю цену товаров в категории.
+        """
+        try:
+            total_value = sum(product.price * product.quantity for product in self.__products)
+            total_quantity = self.total_quantity
+            middle_price = total_value / total_quantity
+            return round(middle_price, 2)
+        except ZeroDivisionError:
+            return 0
+
 
 class CategoryIterator:
     """Вспомогательный класс для итерации по товарам категории"""
@@ -139,11 +156,11 @@ class CategoryIterator:
         self.index = 0
         return self
 
-    def __next__(self) -> 'Product':
+    def __next__(self) -> "Product":
         """Возвращает следующий товар из категории"""
         if self.index >= len(self.products):
             raise StopIteration
-        product: 'Product' = self.products[self.index]
+        product: "Product" = self.products[self.index]
         self.index += 1
         return product
 

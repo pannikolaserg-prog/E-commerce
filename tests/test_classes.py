@@ -3,8 +3,10 @@ import sys
 from io import StringIO
 from unittest.mock import patch
 
+import pytest
+
 # Переходим в корень проекта
-os.chdir(os.path.join(os.path.dirname(__file__), '..'))
+os.chdir(os.path.join(os.path.dirname(__file__), ".."))
 sys.path.insert(0, os.getcwd())
 
 from src.classes import Category, LawnGrass, Product, Smartphone
@@ -250,12 +252,12 @@ class TestProductAddition:
         assert result1 == result2
 
     def test_product_add_with_zero_quantity(self) -> None:
-        """Тест сложения с нулевым количеством"""
-        p1 = Product("Товар1", "", 100, 0)  # 100 * 0 = 0
-        p2 = Product("Товар2", "", 200, 5)  # 200 * 5 = 1000
+        """Тест: создание товара с нулевым количеством должно вызывать ValueError"""
+        with pytest.raises(ValueError) as exc_info:
+            Product("Тестовый товар", "Описание", 100.0, 0)
 
-        result = p1 + p2
-        assert result == 1000
+        # Проверяем текст сообщения об ошибке
+        assert "Товар с нулевым количеством не может быть добавлен" in str(exc_info.value)
 
     def test_product_add_with_same_product(self) -> None:
         """Тест сложения товара с самим собой"""
@@ -265,7 +267,7 @@ class TestProductAddition:
 
 
 class TestOldTestsStillWork:
-    """Тесты что старая функциональность все еще работает"""
+    """Тесты, что старая функциональность все еще работает"""
 
     def test_product_creation_old(self) -> None:
         """Старый тест создания товара"""
@@ -397,3 +399,31 @@ def test_smartphone_and_grass_addition() -> None:
         assert isinstance(result, (int, float))
     except TypeError:
         print("Сложение запрещено - разные типы товаров")
+
+
+def test_middle_price() -> None:
+    """Тест средней цены"""
+    # 1. Пустая категория
+    category1 = Category("Пустая", "Нет товаров", [])
+    assert category1.middle_price() == 0
+
+    # 2. Один товар
+    p1 = Product("Яблоко", "Фрукт", 100, 5)
+    category2 = Category("Фрукты", "Свежие фрукты", [p1])
+    # 100 * 5 / 5 = 100
+    assert category2.middle_price() == 100.0
+
+    # 3. Несколько товаров
+    p2 = Product("Банан", "Фрукт", 50, 10)  # 50 * 10 = 500
+    p3 = Product("Апельсин", "Фрукт", 80, 5)  # 80 * 5 = 400
+    category3 = Category("Фрукты2", "Разные", [p2, p3])
+    # (500 + 400) / (10 + 5) = 900 / 15 = 60
+    assert category3.middle_price() == 60.0
+
+    # 5. Разные количества
+    p4 = Product("Молоко", "2.5%", 90, 2)  # 180
+    p5 = Product("Хлеб", "Белый", 50, 3)  # 150
+    p6 = Product("Сыр", "Российский", 300, 1)  # 300
+    category4 = Category("Продукты", "Еда", [p4, p5, p6])
+    # (180 + 150 + 300) / (2 + 3 + 1) = 630 / 6 = 105
+    assert category4.middle_price() == 105.0
