@@ -1,6 +1,7 @@
 import json
 from typing import List
 
+# Потом импорты проекта
 from src.classes import Category, Product
 
 
@@ -8,10 +9,8 @@ def load_json_to_objects(json_path: str = "data/products.json") -> List[Category
     """
     Простая функция для загрузки данных из JSON файла
     и создания объектов классов Product и Category.
-
     Args:
         json_path (str): Путь к JSON файлу. По умолчанию "data/products.json"
-
     Returns:
         List[Category]: Список объектов Category
     """
